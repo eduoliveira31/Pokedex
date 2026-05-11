@@ -32,13 +32,36 @@ jobs:
       - name: Build
         run: npm run build -- --configuration production --base-href "/Pokedex/" 
         
-      - name: SPA fallback
-        run: cp dist/pokedex-app/browser/index.html dist/pokedex-app/browser/404.html
+      - name: SPA fallback & Path Detection
+        run: |
+          # 1. Tenta encontrar o index.html ou o index.csr.html
+          FILE_PATH=$(find dist -name "index.html" -o -name "index.csr.html" | head -n 1)
+          
+          if [ -z "$FILE_PATH" ]; then
+            echo "ERRO: Nenhum ficheiro index encontrado!"
+            ls -R dist
+            exit 1
+          fi
+          
+          DIR_PATH=$(dirname "$FILE_PATH")
+          echo "Ficheiro encontrado em: $FILE_PATH"
+          
+          # 2. Se o ficheiro se chamar index.csr.html, cria uma cópia como index.html
+          if [[ "$FILE_PATH" == *"index.csr.html" ]]; then
+            cp "$FILE_PATH" "$DIR_PATH/index.html"
+            echo "Copiado index.csr.html para index.html"
+          fi
+          
+          # 3. Cria o 404.html para evitar erros de refresh
+          cp "$DIR_PATH/index.html" "$DIR_PATH/404.html"
+          
+          # 4. Passa o caminho da pasta (provavelmente dist/pokedex-app/browser) para o deploy
+          echo "DEPLOY_PATH=$DIR_PATH" >> $GITHUB_ENV
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/pokedex-app/browser
+          path: ${{ env.DEPLOY_PATH }}
 
   deploy:
     needs: build
