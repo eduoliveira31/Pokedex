@@ -1,0 +1,17 @@
+<div class="pokemon-card-v4" [routerLink]="['/pokemon', pokemon.id]">
+  <div class="card-id">#{{ pokemon.id }}</div>
+
+  <div class="image-inner-box">
+    <img [src]="pokemon.image" [alt]="pokemon.name" class="pkm-sprite" />
+  </div>
+
+  <h3 class="pkm-name">{{ pokemon.name }}</h3>
+
+  <div class="card-actions">
+    @if (!isTeamMode) {
+      <button (click)="$event.stopPropagation(); onAdd()" class="ctrl-btn add" title="Adicionar">➕</button>
+    } @else {
+      <button (click)="$event.stopPropagation(); onRemove()" class="ctrl-btn delete" title="Remover">🗑️</button>
+    }
+  </div>
+</div>

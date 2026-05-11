@@ -1,0 +1,62 @@
+.pokemon-card-v4 {
+  position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px !important;
+  width: 190px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.pokemon-card-v4:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.card-id {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.8rem;
+}
+
+.image-inner-box {
+  background: white;
+  border-radius: 20px;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pkm-sprite { width: 85px; height: 85px; object-fit: contain; }
+
+.pkm-name {
+  text-transform: uppercase;
+  font-weight: 800;
+  color: white;
+  font-size: 1rem;
+  margin: 0;
+  text-align: center;
+}
+
+.ctrl-btn {
+  width: 38px; height: 38px;
+  border-radius: 50% !important;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.ctrl-btn.add { background: #00e676; }
+.ctrl-btn.delete { background: #ff4d4f; color: white; }

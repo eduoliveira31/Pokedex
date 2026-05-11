@@ -1,0 +1,58 @@
+<div class="pokedex-app-container">
+  <div class="main-content-area fade-in">
+    <div class="detail-card-wrapper">
+      
+      <!-- Botão Flutuante para Sair -->
+      <button routerLink="/" class="close-detail">✕</button>
+
+      @if (pokemon()) {
+        <div class="glass-panel detail-grid">
+          
+          <!-- Lado Esquerdo: Identidade -->
+          <div class="id-section">
+            <span class="big-id">#{{ pokemon().id }}</span>
+            <div class="main-image-container">
+              <img [src]="pokemon().sprites.other['official-artwork'].front_default" 
+                   [alt]="pokemon().name" class="official-art">
+            </div>
+            <h1 class="pkm-title">{{ pokemon().name }}</h1>
+            <div class="types-container">
+              @for (t of pokemon().types; track t.type.name) {
+                <span class="type-pill" [attr.data-type]="t.type.name">
+                  {{ t.type.name }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Lado Direito: Data & Stats -->
+          <div class="stats-section">
+            <div class="info-chips">
+              <div class="chip"><span>ALTURA</span> {{ pokemon().height / 10 }}m</div>
+              <div class="chip"><span>PESO</span> {{ pokemon().weight / 10 }}kg</div>
+            </div>
+
+            <div class="stats-list">
+              @for (s of pokemon().stats; track s.stat.name) {
+                <div class="stat-item">
+                  <div class="stat-header">
+                    <span class="label">{{ s.stat.name }}</span>
+                    <span class="value">{{ s.base_stat }}</span>
+                  </div>
+                  <div class="bar-bg">
+                    <div class="bar-fill" 
+                         [style.width.%]="(s.base_stat / 255) * 100"
+                         [attr.data-stat]="s.stat.name"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      } @else {
+        <div class="loading-state">A carregar dados do laboratório...</div>
+      }
+    </div>
+  </div>
+</div>

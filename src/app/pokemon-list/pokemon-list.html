@@ -1,0 +1,116 @@
+<div class="pokedex-app-container">
+  <!-- HEADER MANTIDO -->
+  <header class="pokedex-v4-header">
+    <div class="header-glass-overlay"></div>
+    <div class="top-sensor-bar">
+      <div class="camera-lens-container">
+        <div class="main-lens"><div class="lens-glow"></div></div>
+        <div class="status-lights-vertical">
+          <span class="led red"></span><span class="led yellow"></span><span class="led green"></span>
+        </div>
+      </div>
+    </div>
+    <div class="header-core">
+      <div class="title-wrap">
+        <div class="spinning-pokeball side-left"></div>
+        <h1 class="cyber-title">Pokédex <span class="version">v4.0</span></h1>
+        <div class="spinning-pokeball side-right"></div>
+      </div>
+    </div>
+    <div class="laser-scanner-line"></div>
+  </header>
+
+  <div class="main-content-area">
+    <!-- === DASHBOARD DE EQUIPAS PRO === -->
+    <div class="team-dashboard-wrapper">
+      <div class="team-tabs-container">
+        <button class="team-tab-trigger" [class.active]="activeTab() === 'current'" (click)="setTab('current')">
+          <span class="tab-label">Equipa Atual</span>
+          <span class="tab-badge">{{ teamService.team.length }}/6</span>
+        </button>
+        <button class="team-tab-trigger saved-trigger" [class.active]="activeTab() === 'saved'" (click)="setTab('saved')">
+          <span class="tab-label">Coleção de Decks</span>
+          <span class="tab-badge">{{ teamService.savedTeams.length }}</span>
+        </button>
+      </div>
+
+      <div class="dashboard-glass-body">
+        <!-- ABA 1: EDIÇÃO DO DECK ATUAL -->
+        @if (activeTab() === 'current') {
+          <div class="panel-content fade-in">
+            @if (teamService.team.length === 0) {
+              <div class="empty-state">
+                <!-- PONTO DE INTERROGAÇÃO REMOVIDO DAQUI -->
+                <p>O teu deck está vazio. Seleciona Pokémon abaixo para começar!</p>
+              </div>
+            }
+            <div class="pokemon-grid centered-grid">
+              @for (member of teamService.team; track member.id) {
+                <app-pokemon-card [pokemon]="member" [isTeamMode]="true" (removeClicked)="teamService.removePokemon($event)"></app-pokemon-card>
+              }
+            </div>
+            @if (teamService.team.length > 0) {
+              <div class="action-footer">
+                <button class="btn-save-deck" (click)="teamService.saveCurrentTeam(); setTab('saved')">Confirmar & Guardar Deck</button>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ABA 2: DECKS GUARDADOS -->
+        @if (activeTab() === 'saved') {
+          <div class="panel-content fade-in">
+            @if (teamService.savedTeams.length === 0) {
+              <p class="empty-msg">Ainda não tens decks na tua coleção.</p>
+            }
+            <div class="saved-decks-list">
+              @for (savedTeam of teamService.savedTeams; track $index) {
+                <div class="deck-row-card">
+                  <div class="deck-info">
+                    <span class="deck-number">#{{ $index + 1 }}</span>
+                    <h3>Deck de Batalha</h3>
+                    <div class="deck-ctrls">
+                      <!-- BOTÕES LADO A LADO[cite: 3] -->
+                      <button class="ctrl-btn edit" (click)="teamService.loadSavedTeam($index); setTab('current')" title="Editar Deck">📝</button>
+                      <button class="ctrl-btn delete" (click)="teamService.removeSavedTeam($index)" title="Apagar Deck">🗑️</button>
+                    </div>
+                  </div>
+                  <div class="deck-preview-grid">
+                    @for (pkm of savedTeam; track pkm.id) {
+                      <div class="mini-pkm-shield"><img [src]="pkm.image" [alt]="pkm.name" /></div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- NAVEGAÇÃO E LISTA PRINCIPAL (MANTIDOS) -->
+    <div class="nav-tablet-container mb-5">
+      <div class="page-indicator-glow">PÁGINA {{ currentPage() }} / {{ totalPages }}</div>
+      <div class="tablet-controls">
+        <button class="tablet-btn" (click)="previousPage()" [disabled]="currentPage() === 1 || isLoading()">&lsaquo; PREV</button>
+        <button class="tablet-reset" (click)="resetPokemons()" [disabled]="isLoading()"><span class="reset-icon">↺</span></button>
+        <button class="tablet-btn" (click)="nextPage()" [disabled]="isLoading()">NEXT &rsaquo;</button>
+      </div>
+    </div>
+
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-6">
+        <div class="search-neon-box">
+          <input type="text" class="search-input" placeholder="Identificar Pokémon..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+          <span class="search-icon-anim">🔍</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pokemon-grid">
+      @for (pokemon of filteredPokemons(); track pokemon.id) {
+        <app-pokemon-card [pokemon]="pokemon" [isTeamMode]="false" (addClicked)="addToTeam($event)" [class.fade-out-anim]="removingPokemons().includes(pokemon.name)"></app-pokemon-card>
+      }
+    </div>
+  </div>
+</div>
