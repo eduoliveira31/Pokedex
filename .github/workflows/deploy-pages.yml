@@ -30,7 +30,7 @@ jobs:
         run: npm ci
         
       - name: Build
-        run: npm run build --configuration production --base-href "/Pokedex/" 
+        run: npm run build -- --configuration production --base-href "/Pokedex/" 
         
       - name: SPA fallback
         run: cp dist/pokedex-app/browser/index.html dist/pokedex-app/browser/404.html
